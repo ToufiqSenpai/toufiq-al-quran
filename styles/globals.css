@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 html,
 body {
   padding: 0;
@@ -13,6 +17,15 @@ a {
 
 * {
   box-sizing: border-box;
+}
+
+body {
+  cursor: default;
+}
+
+@font-face {
+  font-family: quran;
+  src: url('http://localhost:3000/fonts/quran.ttf');
 }
 
 @media (prefers-color-scheme: dark) {
