@@ -56,11 +56,11 @@ export const getStaticPaths: GetStaticPaths = async () => {
 }
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
-  const getAyahScript = await fetch(`https://api.quran.com/api/v4/quran/verses/uthmani?chapter_number=${params.surah}`)
+  const getAyahScript = await fetch(`https://api.quran.com/api/v4/quran/verses/uthmani?chapter_number=${params?.surah}`)
     .then(response => response.json())
     .then(response => response.verses)
 
-  const getSurahDetails = await fetch(`https://api.quran.com/api/v4/chapters/${params.surah}?language=id`)
+  const getSurahDetails = await fetch(`https://api.quran.com/api/v4/chapters/${params?.surah}?language=id`)
     .then(response => response.json())
     .then(response => response.chapter)
 
