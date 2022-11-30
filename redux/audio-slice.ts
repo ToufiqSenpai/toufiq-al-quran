@@ -4,7 +4,8 @@ import type { PayloadAction } from '@reduxjs/toolkit'
 const initialState = {
   play: false,
   audioUrl: '',
-  showAudioNav: false
+  showAudioNav: false,
+  currentSurah: '0'
 }
 
 const audioSlice = createSlice({
@@ -19,6 +20,9 @@ const audioSlice = createSlice({
     },
     setAudioUrl: (state, action: PayloadAction<string>) => {
       state.audioUrl = action.payload
+    },
+    setCurrentSurah: (state, action: PayloadAction<string>) => {
+      state.currentSurah = action.payload
     }
   }
 })
@@ -26,7 +30,8 @@ const audioSlice = createSlice({
 export const {
   setPlay,
   showAudioNav,
-  setAudioUrl
+  setAudioUrl,
+  setCurrentSurah
 } = audioSlice.actions
 
 export default audioSlice.reducer

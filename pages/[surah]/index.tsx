@@ -23,7 +23,7 @@ function Surah({ ayahScript, surahDetails }: PageProps) {
           height={100}
         />
       </div>
-      <PlayAudio audioUrl='' />
+      <PlayAudio />
       <Divider />
       <section>
         {ayahScript.map((ayah: any, index: number) => (
@@ -51,7 +51,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
   return {
     paths,
-    fallback: false
+    fallback: 'blocking'
   }
 }
 
