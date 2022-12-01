@@ -18,6 +18,7 @@ function AudioBar() {
 
   const audioRef = useRef<HTMLAudioElement>(null)
   const sliderRef = useRef<HTMLInputElement>(null)
+  const [seeking, setSeeking] = useState(false)
 
   // Event play
   useEffect(() => {
@@ -34,20 +35,41 @@ function AudioBar() {
   useEffect(() => {
     if (!audioRef.current) return
 
-    audioRef.current.addEventListener('timeupdate', e => {
+    function timeUpdate(e: any) {
+   
+        if (!audioRef.current) return
+        if (!sliderRef.current) return
+        const slider = sliderRef.current
+        const audioCurrTime = audioRef.current.currentTime
+  
+        slider.value = audioCurrTime.toString()
+        setCurrentTime(Math.floor(audioCurrTime))
+        
+      
+    }
+
+    if(!seeking) {
+      audioRef.current.addEventListener('timeupdate', timeUpdate)
+    } else {
+      audioRef.current.removeEventListener('timeupdate', timeUpdate)
+    }
+
+    sliderRef.current?.addEventListener('mousedown', e => {
+      setSeeking(true)
+    })
+
+    sliderRef.current?.addEventListener('mouseup', e => {
+      setSeeking(false)
       if (!audioRef.current) return
       if (!sliderRef.current) return
-      const audioCurrTime = audioRef.current.currentTime
 
-      sliderRef.current.value = audioCurrTime.toString()
-      setCurrentTime(Math.floor(audioCurrTime))
+      audioRef.current.currentTime = parseInt(sliderRef.current.value)
     })
-  }, [])
 
-  const handleChangeTime = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!audioRef.current) return
-    audioRef.current.currentTime = parseInt(e.target.value)
-  }
+    return () => {
+      audioRef.current?.removeEventListener('timeupdate', timeUpdate)
+    }
+  }, [seeking])
 
   const formatTime = (second: number) => {
     const hours = Math.floor(second / 3600);
@@ -58,16 +80,6 @@ function AudioBar() {
       .filter((v, i) => v !== '00' || i > 0)
       .join(':');
   }
-
-  // useEffect(() => {
-  //   window.addEventListener('keypress', e => {
-  //     if(e.keyCode === 32 && e.target == document.body) {
-  //       e.preventDefault()
-  //       dispatch(setPlay(play ? false : true))
-  //     }
-  //   })
-  // }, [play])
-
 
   return (
     <motion.nav
@@ -86,7 +98,7 @@ function AudioBar() {
           ref={sliderRef}
           min={0}
           max={audioRef.current?.duration}
-          // value={Math.floor(audioRef.current?.currentTime)}
+        // onMouseUp={e => console.log(e.target.value)}
         />
         <div className='flex justify-between mx-1 text-sm'>
           <div>{formatTime(Math.floor(audioRef.current?.currentTime || 0))}</div>
