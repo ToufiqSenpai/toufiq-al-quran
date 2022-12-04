@@ -10,7 +10,6 @@ interface PageProps {
 }
 
 function Surah({ ayahScript, surahDetails }: PageProps) {
-  // ayahScript.map(ayah => console.log(ayah))
   return (
     <main className="max-w-[1200px] mt-14 mx-auto">
       <h1 className='text-center text-2xl font-medium'>Surah {surahDetails.name_simple}</h1>
@@ -28,8 +27,8 @@ function Surah({ ayahScript, surahDetails }: PageProps) {
       <section>
         {ayahScript.map((ayah: any, index: number) => (
           <React.Fragment key={index + 1}>
-            <div className='my-3'>
-              <h6 className='text-right font-quran text-3xl'>{ayah.text_uthmani}</h6>
+            <div className='my-3 mx-2'>
+              <div className='text-right font-quran text-3xl'>{ayah.text_uthmani} {`(١)`}</div>
             </div>
             <Divider />
           </React.Fragment>
