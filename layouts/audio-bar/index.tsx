@@ -10,10 +10,13 @@ import RepeatRoundedIcon from '@mui/icons-material/RepeatRounded';
 import { RootState } from '../../redux/store';
 import { setAudioUrl, setCurrentSurah, setPlay } from '../../redux/audio-slice';
 import formatTime from '../../utils/format-time';
+import { useLocalStorage } from 'usehooks-ts';
 
 function AudioBar() {
   const [currentTime, setCurrentTime] = useState<number>(0)
   const [seeking, setSeeking] = useState(false)
+
+  const [qari] = useLocalStorage('qari', 7)
 
   const { audioUrl, play, showAudioNav, currentSurah } = useSelector((state: RootState) => state.audio)
   const dispatch = useDispatch()
@@ -91,14 +94,13 @@ function AudioBar() {
       audioRef.current.currentTime = 0
     } else {
       const prevSurah = (parseInt(currentSurah) - 1).toString()
-      const res = await fetch(`https://api.quran.com/api/v4/chapter_recitations/7/${prevSurah}`)
+      const res = await fetch(`https://api.quran.com/api/v4/chapter_recitations/${qari}/${prevSurah}`)
       const audio = await res.json()
 
       dispatch(setAudioUrl(audio.audio_file.audio_url))
       dispatch(setCurrentSurah(prevSurah))
       await audioRef.current?.pause()
       await audioRef.current?.play()
-      push(prevSurah) 
     }
 
 
@@ -106,14 +108,13 @@ function AudioBar() {
 
   const handleNextSurah = async () => {
     const nextSurah = (parseInt(currentSurah) + 1).toString()
-    const res = await fetch(`https://api.quran.com/api/v4/chapter_recitations/7/${nextSurah}`)
+    const res = await fetch(`https://api.quran.com/api/v4/chapter_recitations/${qari}/${nextSurah}`)
     const audio = await res.json()
 
     dispatch(setAudioUrl(audio.audio_file.audio_url))
     dispatch(setCurrentSurah(nextSurah))
     await audioRef.current?.pause()
     await audioRef.current?.play()
-    push(nextSurah) 
   }
 
   return (

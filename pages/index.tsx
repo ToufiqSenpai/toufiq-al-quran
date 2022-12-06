@@ -23,7 +23,7 @@ function Page({ surahList }: PageProps) {
         <input className='border border-solid border-black mx-auto min-w-[310px] max-w-7xl rounded px-2 h-7' placeholder='Search surah...' {...getInputProps()} />
       </section>
       <Divider className='my-3' />
-      <section className="grid max-mobile:grid-cols-1 min-ipad:grid-cols-2 min-desktop:grid-cols-3 gap-3 px-2">
+      <section className="mb-16 grid max-mobile:grid-cols-1 min-ipad:grid-cols-2 min-desktop:grid-cols-3 gap-3 px-2">
         {groupedOptions.map((data: any, index: number) => (
           <figure key={index} className="m-0 py-2 border border-solid border-black flex items-center justify-between" onClick={() => push(`/${data.id}`)}>
             <div className="flex items-center">
@@ -44,7 +44,7 @@ function Page({ surahList }: PageProps) {
 export default Page
 
 export async function getStaticProps() {
-  const res = await fetch('https://api.quran.com/api/v4/chapters?language=id')
+  const res = await fetch('https://api.quran.com/api/v4/chapters?language=en')
   const data = await res.json()
 
   return {

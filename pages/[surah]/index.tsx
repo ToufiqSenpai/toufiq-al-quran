@@ -3,15 +3,39 @@ import { Divider } from '@mui/material'
 import Image from 'next/legacy/image'
 import { GetStaticProps, GetStaticPaths } from 'next'
 import PlayAudio from '../../components/surah/PlayAudio';
+import arabicNumber from '../../utils/arabic-number';
+import { useLocalStorage } from 'usehooks-ts';
+import Head from 'next/head';
 
-interface PageProps {
-  ayahScript: any[],
-  surahDetails: any
+type Translate = {
+  resource_id: number,
+  text: string
 }
 
-function Surah({ ayahScript, surahDetails }: PageProps) {
+interface PageProps {
+  ayahScript: any[]
+  surahDetails: any
+  translate: {
+    id: Translate[]
+    en: Translate[]
+  }
+}
+
+function Surah({ ayahScript, surahDetails, translate }: PageProps) {
+  const [translateId] = useLocalStorage('language', 'en')
+  const [showTranslate] = useLocalStorage('show-translate', 'false')
+
+  const translateText = (): any => {
+    if(translateId == 'en') return translate.en
+    else if(translateId == 'id') return translate.id
+    else return translate.en
+  }
+
   return (
     <main className="max-w-[1200px] mt-14 mx-auto">
+      <Head>
+        <title>{"Taufiq's"} Quran | Surah {surahDetails.name_simple}</title>
+      </Head>
       <h1 className='text-center text-2xl font-medium'>Surah {surahDetails.name_simple}</h1>
       <div className='relative flex justify-center'>
         <Image
@@ -24,11 +48,12 @@ function Surah({ ayahScript, surahDetails }: PageProps) {
       </div>
       <PlayAudio />
       <Divider />
-      <section>
+      <section className='mb-16'>
         {ayahScript.map((ayah: any, index: number) => (
           <React.Fragment key={index + 1}>
-            <div className='my-3 mx-2'>
-              <div className='text-right font-quran text-3xl'>{ayah.text_uthmani} {`(١)`}</div>
+            <div className='my-3 mx-3'>
+              <div className='text-right font-quran text-3xl'>{ayah.text_uthmani} {`(${arabicNumber(index + 1)})`}</div>
+              {showTranslate ? <div className='text-base mt-2 max-mobile:mt-5' dangerouslySetInnerHTML={{ __html: translateText()[index].text}}></div> : null}
             </div>
             <Divider />
           </React.Fragment>
@@ -63,10 +88,22 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     .then(response => response.json())
     .then(response => response.chapter)
 
+  const enAyahTranslation = await fetch(`https://api.quran.com/api/v4/quran/translations/167?chapter_number=${params?.surah}`)
+    .then(response => response.json())
+    .then(response => response.translations)
+
+  const idAyahTranslation = await fetch(`https://api.quran.com/api/v4/quran/translations/33?chapter_number=${params?.surah}`)
+    .then(response => response.json())
+    .then(response => response.translations)
+
   return {
     props: {
       ayahScript: getAyahScript,
-      surahDetails: getSurahDetails
+      surahDetails: getSurahDetails,
+      translate: {
+        en: enAyahTranslation,
+        id: idAyahTranslation
+      }
     }
   }
 }

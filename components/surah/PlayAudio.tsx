@@ -5,14 +5,16 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
 import { RootState } from '../../redux/store';
 import { setAudioUrl, setCurrentSurah, setPlay, showAudioNav } from '../../redux/audio-slice';
+import { useLocalStorage } from 'usehooks-ts';
 
 function PlayAudio() {
+  const [qari] = useLocalStorage('qari', 7)
   const audioState = useSelector((state: RootState) => state.audio)
   const dispatch = useDispatch()
   const { query } = useRouter()
 
   const handlePlay = async () => {
-    const res = await fetch(`https://api.quran.com/api/v4/chapter_recitations/7/${query.surah}`)
+    const res = await fetch(`https://api.quran.com/api/v4/chapter_recitations/${qari}/${query.surah}`)
     const audio = await res.json()
 
     // Handle show audio nav
